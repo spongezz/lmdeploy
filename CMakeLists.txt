@@ -16,6 +16,8 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR) # for PyTorch extensions, versi
 project(TurboMind LANGUAGES CXX CUDA)
 
 find_package(CUDA 10.2 REQUIRED)
+include_directories("/usr/local/cuda/targets/x86_64-linux/include")
+list(PREPEND CMAKE_FIND_ROOT_PATH "/usr/local/cuda/targets/x86_64-linux")
 
 # if(${CUDA_VERSION_MAJOR} VERSION_GREATER_EQUAL "11")
 #   add_definitions("-DENABLE_BF16")
@@ -152,16 +154,17 @@ if(NOT (FIND_SM STREQUAL True))
                         -gencode=arch=compute_75,code=\\\"sm_75,compute_75\\\" \
                         -gencode=arch=compute_80,code=\\\"sm_80,compute_80\\\" \
                         -gencode=arch=compute_86,code=\\\"sm_86,compute_86\\\" \
+                        -gencode=arch=compute_89,code=\\\"sm_89,compute_89\\\" \
                         ")
   #                      -rdc=true")
   set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}    -DWMMA")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}  -DWMMA")
   set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -DWMMA")
   if(BUILD_PYT)
-    set(ENV{TORCH_CUDA_ARCH_LIST} "7.0;7.5;8.0;8.6")
+    set(ENV{TORCH_CUDA_ARCH_LIST} "7.0;7.5;8.0;8.6;8.9")
   endif()
-  set(CMAKE_CUDA_ARCHITECTURES 70 75 80 86)
-  message("-- Assign GPU architecture (sm=70,75,80,86)")
+  set(CMAKE_CUDA_ARCHITECTURES 70 75 80 86 89)
+  message("-- Assign GPU architecture (sm=70,75,80,86,89)")
 endif()
 
 if(BUILD_PYT)
